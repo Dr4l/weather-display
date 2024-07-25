@@ -1,14 +1,12 @@
+import { useState, useEffect } from "react";
 import { WeatherIcon } from "./components/WeatherIcon";
 import { FeaturedData } from "./components/FeaturedData";
 import { MainData } from "./components/MainData";
-
-import "./App.css";
 import { TimeData } from "./components/TimeData";
 import { fetchData } from "./utilities/fetchData";
-
-import { useState, useEffect } from "react";
 import { Forecast } from "./components/Forecast";
 import { destructureDate } from "./utilities/time_data";
+import "./App.css";
 
 function App() {
   const [data, setData] = useState();
@@ -30,7 +28,7 @@ function App() {
           })
           .catch((error) => console.error(error));
       }
-    });
+    }, 1000); // Added missing interval delay
     fetchData()
       .then((res) => {
         setData({ ...res, time: destructureDate(new Date()) });
@@ -40,25 +38,25 @@ function App() {
     return () => clearInterval(timerID);
   }, []);
 
-  if (!data) return;
+  if (!data) return null;
 
   return (
     <div className="app">
       <div className="featured-data">
-        <FeaturedData />
+        <FeaturedData city="Sinaia" />
       </div>
 
       <div className="temperature-display">
-        <WeatherIcon />
+        <WeatherIcon weatherCode={data.weatherCode}/>
       </div>
       <div className="main-data">
-        <MainData />
+        <MainData temperature={data.temperature} apparentTemperature={data.apparentTemperature}/>
       </div>
       <div className="time-data">
-        <TimeData />
+        <TimeData time={data.time} />
       </div>
       <div className="forecast">
-        <Forecast />
+        <Forecast Forecast={data.Forecast}/>
       </div>
     </div>
   );
